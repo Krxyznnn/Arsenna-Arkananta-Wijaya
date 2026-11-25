@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For you, Arsenna Arkananta Wijaya</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Fraunces (Serif), Caveat (Handwriting), Quicksand (Clean UI & Stickers) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,600&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --berry-pink: #2563eb;
+      --matcha-green: #60a5fa;
+      --strawberry-glaze: #93c5fd;
+      --strawberry-highlight: #dbeafe;
+      --cream-ink: #f8fbff;
+      --olive-pill: #1e3a8a;
+      --wax-pink: #3b82f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Quicksand', sans-serif;
+      background-color: var(--berry-pink);
+      color: var(--cream-ink);
+      overflow-x: hidden;
+    }
+
+    .font-serif-editorial {
+      font-family: 'Fraunces', Georgia, serif;
+    }
+
+    .font-handwriting {
+      font-family: 'Caveat', cursive;
+    }
+
+    /* =========================================================
+       STAGE 1: ENVELOPE & WAX SEAL INTERACTIONS
+    ========================================================== */
+    .envelope-wrapper {
+      perspective: 1100px;
+      cursor: pointer;
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .envelope-wrapper:hover {
+      transform: scale(1.035);
+    }
+
+    .envelope-tilt {
+      transform: rotate(-6deg);
+      transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .envelope-wrapper.opened .envelope-tilt {
+      transform: rotate(0deg) scale(1.03);
+    }
+
+    .envelope-flap {
+      transform-origin: top center;
+      transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.2s;
+      z-index: 20;
+    }
+
+    .envelope-wrapper.opened .envelope-flap {
+      transform: rotateX(180deg);
+      z-index: 5;
+    }
+
+    .wax-seal {
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
+    }
+
+    .envelope-wrapper.opened .wax-seal {
+      transform: translate(-50%, -50%) scale(1.5);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .letter-peek {
+      transition: transform 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) 0.22s;
+    }
+
+    .envelope-wrapper.opened .letter-peek {
+      transform: translateY(-54px);
+    }
+
+    /* Floating mini hearts when envelope pops */
+    @keyframes floatUpHeart {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(0.75) rotate(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-140px) scale(1.3) rotate(20deg);
+      }
+    }
+
+    .floating-heart {
+      position: fixed;
+      pointer-events: none;
+      z-index: 60;
+      animation: floatUpHeart 1.35s ease-out forwards;
+    }
+
+    /* Sticker gentle float */
+    @keyframes gentleFloat {
+      0%, 100% { transform: translateY(0px) rotate(-1.5deg); }
+      50% { transform: translateY(-7px) rotate(1.5deg); }
+    }
+
+    .sticker-float {
+      animation: gentleFloat 4.2s ease-in-out infinite;
+    }
+
+    /* =========================================================
+       STAGE 2: REAL-TIME HANDWRITING CHARACTERS & MOVING PEN
+    ========================================================== */
+    .hw-word {
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .hw-char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(3px) scale(0.96);
+      transition: opacity 0.14s ease-out, transform 0.16s ease-out;
+    }
+
+    .hw-char.written {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    #writing-pen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 34px;
+      height: 34px;
+      pointer-events: none;
+      z-index: 30;
+      opacity: 0;
+      transform-origin: 4px 30px;
+      transition: transform 0.065s linear, opacity 0.25s ease;
+      filter: drop-shadow(0 4px 6px rgba(28, 38, 8, 0.35));
+    }
+
+    #writing-pen.active {
+      opacity: 1;
+    }
+
+    /* =========================================================
+       STAGE 3: GLASS BOTTLE & 9 LITTLE NOTE TOKENS
+    ========================================================== */
+    @keyframes bottleShake {
+      0%   { transform: rotate(0deg) translate(0, 0); }
+      15%  { transform: rotate(-9deg) translate(-7px, -4px); }
+      30%  { transform: rotate(8deg) translate(7px, -6px); }
+      45%  { transform: rotate(-7deg) translate(-5px, -2px); }
+      60%  { transform: rotate(6deg) translate(6px, -4px); }
+      75%  { transform: rotate(-4deg) translate(-3px, -1px); }
+      90%  { transform: rotate(2deg) translate(2px, 0); }
+      100% { transform: rotate(0deg) translate(0, 0); }
+    }
+
+    .bottle-shaking {
+      animation: bottleShake 0.65s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+    }
+
+    .note-charm {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 4px 10px rgba(48, 19, 30, 0.24), inset 0 1px 1px rgba(255, 255, 255, 0.55);
+      transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  left 0.65s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  top 0.65s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.25s ease;
+    }
+
+    .note-charm:hover {
+      z-index: 30 !important;
+      transform: scale(1.22) rotate(0deg) !important;
+      box-shadow: 0 8px 18px rgba(48, 19, 30, 0.35), 0 0 0 3px rgba(255, 248, 239, 0.8);
+    }
+
+    .note-charm.highlighted {
+      z-index: 28 !important;
+      box-shadow: 0 0 0 3px #fff8ef, 0 8px 20px rgba(255, 248, 239, 0.55);
+    }
+
+    /* =========================================================
+       MUSIC PLAYER PILL ANIMATIONS
+    ========================================================== */
+    @keyframes spinDisc {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .disc-spinning {
+      animation: spinDisc 5s linear infinite;
+    }
+
+    @keyframes eqBounce {
+      0%, 100% { height: 4px; }
+      50% { height: 14px; }
+    }
+
+    .eq-bar {
+      width: 2.5px;
+      border-radius: 99px;
+      background-color: #f29cb6;
+      height: 5px;
+    }
+
+    .is-playing .eq-bar:nth-child(1) { animation: eqBounce 0.7s ease-in-out infinite 0.0s; }
+    .is-playing .eq-bar:nth-child(2) { animation: eqBounce 0.55s ease-in-out infinite 0.2s; }
+    .is-playing .eq-bar:nth-child(3) { animation: eqBounce 0.8s ease-in-out infinite 0.1s; }
+    .is-playing .eq-bar:nth-child(4) { animation: eqBounce 0.6s ease-in-out infinite 0.3s; }
+
+    /* Modal entrance */
+    @keyframes modalIn {
+      0% { opacity: 0; transform: scale(0.86) translateY(16px) rotate(-2deg); }
+      100% { opacity: 1; transform: scale(1) translateY(0) rotate(0deg); }
+    }
+
+    .modal-card-enter {
+      animation: modalIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    /* =========================================================
+       BLUE THEME OVERRIDE
+    ========================================================== */
+    #stage1 { background-color: #2563eb !important; }
+    #stage2 { background-color: #60a5fa !important; }
+    #stage3 { background-color: #1d4ed8 !important; }
+
+    #stage1 .envelope-tilt > div:first-child { background-color: #1e40af !important; border-color: #1e3a8a !important; }
+    #stage1 .letter-peek span { color: #2563eb !important; }
+    #stage1 .envelope-tilt svg polygon[fill="#6a8329"] { fill: #3b82f6 !important; }
+    #stage1 .envelope-tilt svg polygon[fill="#617824"] { fill: #2563eb !important; }
+    #stage1 .envelope-tilt svg polygon[fill="#738e2d"] { fill: #60a5fa !important; }
+    #stage1 .envelope-tilt svg polygon[fill="#7b9731"] { fill: #93c5fd !important; }
+    #stage1 .wax-seal.absolute { background-color: #3b82f6 !important; border-color: #dbeafe !important; }
+    #stage1 .wax-seal.absolute > div { background: linear-gradient(to bottom right, #60a5fa, #2563eb) !important; border-color: #93c5fd !important; }
+
+    #stage2 > div:first-child { background-color: #60a5fa !important; }
+    #stage2 svg [fill="#6a8329"] { fill: #2563eb !important; }
+    #stage2 svg [fill="#3b4b16"] { fill: #1e3a8a !important; }
+    #stage2 svg [fill="#d86788"] { fill: #2563eb !important; }
+    #stage2 svg [fill="#e56b8f"] { fill: #3b82f6 !important; }
+    #stage2 svg [fill="#f6a2bc"],
+    #stage2 svg [fill="#e382a0"] { fill: #93c5fd !important; }
+    #stage2 svg [fill="#ffd3e1"] { fill: #dbeafe !important; }
+    #stage2 svg [stroke="#3b4b16"] { stroke: #1e3a8a !important; }
+
+    #stage3 rect[fill="#6a8329"] { fill: #2563eb !important; stroke: #1e3a8a !important; }
+    #stage3 rect[stroke="#475919"] { stroke: #1e3a8a !important; }
+    #stage3 #shakeBtn { background-color: #2563eb !important; box-shadow: 0 8px 20px rgba(30,58,138,0.4) !important; }
+    #stage3 #shakeBtn:hover { background-color: #1d4ed8 !important; }
+
+    #noteModalCard { color: #1e3a8a !important; }
+    #noteModalCard #modalLabel,
+    #noteModalCard #closeModalBtn,
+    #noteModalCard #prevNoteBtn,
+    #noteModalCard #modalMessage { color: #1e3a8a !important; }
+    #noteModalCard #modalIconBadge { background-color: #dbeafe !important; color: #2563eb !important; }
+    #noteModalCard #nextNoteBtn { background-color: #2563eb !important; }
+
+    #musicPill { background-color: #1e3a8a !important; border-color: #60a5fa !important; }
+    #musicPill #vinylDisc { background-color: #172554 !important; border-color: #60a5fa !important; }
+    #musicPill #pillPlayBtn { background-color: #60a5fa !important; color: #1e3a8a !important; }
+    #musicPill #attachAudioBtn { color: #93c5fd !important; }
+    .eq-bar { background-color: #93c5fd !important; }
+
+    body { background-color: #2563eb; }
+  </style>
+</head>
+<body class="selection:bg-[#93c5fd] selection:text-[#1e3a8a]">
+
+  <!-- Top-Left Floating Mute / Unmute Button -->
+  <button
+    id="topMuteBtn"
+    type="button"
+    aria-label="Toggle background music"
+    class="fixed top-4 left-4 sm:top-6 sm:left-6 z-50 w-11 h-11 rounded-full bg-[#fff8ef]/95 text-[#6a8329] shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-transform border border-[#e6dccb] cursor-pointer"
+  >
+    <svg id="iconMuted" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+      <line x1="22" y1="9" x2="16" y2="15" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></line>
+      <line x1="16" y1="9" x2="22" y2="15" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></line>
+    </svg>
+    <svg id="iconUnmuted" class="w-5 h-5 hidden" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path>
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+
+  <!-- =========================================================
+       STAGE 1: OPENING ENVELOPE SCREEN (100vh, #d86788)
+  ========================================================== -->
+  <section
+    id="stage1"
+    class="min-h-screen w-full bg-[#d86788] flex flex-col items-center justify-center px-5 py-12 relative overflow-hidden"
+  >
+    <!-- Soft ambient sparkles -->
+    <div class="absolute inset-0 pointer-events-none opacity-25">
+      <div class="absolute top-16 right-14 w-3 h-3 rounded-full bg-[#fff8ef]"></div>
+      <div class="absolute bottom-28 left-14 w-2.5 h-2.5 rounded-full bg-[#ffd3e1]"></div>
+      <div class="absolute top-1/3 left-1/4 w-2 h-2 rounded-full bg-[#fff8ef]"></div>
+      <div class="absolute bottom-1/4 right-1/4 w-3.5 h-3.5 rounded-full bg-[#ffd3e1]"></div>
+    </div>
+
+    <!-- Centered Editorial Heading -->
+    <div class="text-center mb-9 sm:mb-11 z-10 select-none">
+      <h1 class="font-serif-editorial text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight text-[#fff8ef] drop-shadow-sm">
+        i have something
+      </h1>
+      <p class="font-serif-editorial italic text-2xl sm:text-3xl md:text-4xl text-[#fff8ef]/95 mt-1">
+        for you.
+      </p>
+    </div>
+
+    <!-- Tilted Matcha Green Envelope (-6deg) -->
+    <div id="envelopeTrigger" role="button" tabindex="0" aria-label="Tap the envelope to open" class="envelope-wrapper relative z-10 select-none">
+      <div class="envelope-tilt relative w-[292px] h-[198px] sm:w-[356px] sm:h-[238px]">
+
+        <!-- Back Base -->
+        <div class="absolute inset-0 rounded-xl bg-[#4f641c] shadow-[0_22px_45px_rgba(68,20,35,0.34)] border border-[#3f5115]"></div>
+
+        <!-- Peek-out Cream Letter Card inside -->
+        <div class="letter-peek absolute left-4 right-4 top-4 bottom-4 rounded-lg bg-[#fff8ef] border border-[#e6dccb] shadow-inner flex flex-col items-center justify-start pt-4 px-4 z-10">
+          <span class="font-handwriting text-2xl sm:text-[26px] text-[#6a8329] font-bold">Dear Acen...</span>
+          <div class="w-3/4 h-0.5 bg-[#e6dccb] mt-1.5 rounded"></div>
+          <div class="w-1/2 h-0.5 bg-[#e6dccb] mt-1.5 rounded"></div>
+        </div>
+
+        <!-- Front Pocket Flaps -->
+        <svg class="absolute inset-0 w-full h-full z-15 pointer-events-none rounded-xl overflow-hidden" viewBox="0 0 356 238" preserveAspectRatio="none">
+          <polygon points="0,0 178,128 0,238" fill="#6a8329" />
+          <polygon points="356,0 178,128 356,238" fill="#617824" />
+          <polygon points="0,238 178,114 356,238" fill="#738e2d" />
+          <polyline points="0,0 178,128 356,0" fill="none" stroke="#455818" stroke-width="1.5" opacity="0.55" />
+          <polyline points="0,238 178,114 356,238" fill="none" stroke="#455818" stroke-width="1.5" opacity="0.65" />
+        </svg>
+
+        <!-- Top Opening Flap -->
+        <div class="envelope-flap absolute inset-x-0 top-0 h-[134px] sm:h-[156px] pointer-events-none">
+          <svg class="w-full h-full drop-shadow-md" viewBox="0 0 356 156" preserveAspectRatio="none">
+            <polygon points="0,0 356,0 178,144" fill="#7b9731" stroke="#455818" stroke-width="1.5" />
+          </svg>
+        </div>
+
+        <!-- Delicate White Baby's-Breath Flower Sprig tucked under the seal -->
+        <svg class="wax-seal absolute left-1/2 top-[53%] -translate-x-1/2 -translate-y-[82%] w-24 h-24 z-25 pointer-events-none" viewBox="0 0 100 100">
+          <path d="M50 85 Q46 58 34 38" fill="none" stroke="#eef5dd" stroke-width="1.8" stroke-linecap="round" />
+          <path d="M50 85 Q52 55 64 34" fill="none" stroke="#eef5dd" stroke-width="1.8" stroke-linecap="round" />
+          <path d="M47 64 Q36 56 26 52" fill="none" stroke="#eef5dd" stroke-width="1.5" stroke-linecap="round" />
+          <path d="M53 58 Q65 50 74 46" fill="none" stroke="#eef5dd" stroke-width="1.5" stroke-linecap="round" />
+          <circle cx="34" cy="38" r="3.4" fill="#fff8ef" />
+          <circle cx="28" cy="43" r="2.6" fill="#fff8ef" />
+          <circle cx="41" cy="33" r="2.8" fill="#fff8ef" />
+          <circle cx="64" cy="34" r="3.6" fill="#fff8ef" />
+          <circle cx="57" cy="29" r="2.7" fill="#fff8ef" />
+          <circle cx="71" cy="38" r="2.5" fill="#fff8ef" />
+          <circle cx="26" cy="52" r="3.1" fill="#fff8ef" />
+          <circle cx="74" cy="46" r="3.0" fill="#fff8ef" />
+          <circle cx="49" cy="44" r="2.8" fill="#fff8ef" />
+        </svg>
+
+        <!-- Round Pink Wax Seal (#e56b8f) with Embossed Heart -->
+        <div class="wax-seal absolute left-1/2 top-[58%] -translate-x-1/2 -translate-y-1/2 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#e56b8f] shadow-[0_6px_14px_rgba(70,18,34,0.38)] border-[3px] border-[#ffd3e1] flex items-center justify-center z-30">
+          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-[#c74e72]/60 flex items-center justify-center bg-gradient-to-br from-[#f285a5] to-[#d95b80]">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-[#ffd3e1] drop-shadow-sm" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hand-Drawn Curved Arrow & Handwritten Hint -->
+    <div id="envelopePrompt" class="mt-6 flex items-center gap-2 text-[#fff8ef]/95 select-none z-10 transition-opacity duration-500">
+      <svg class="w-8 h-8 -mt-3 text-[#fff8ef]" viewBox="0 0 48 48" fill="none">
+        <path d="M34 38 C 18 36, 12 24, 16 10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+        <path d="M11 15 L 16 9 L 22 14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <span class="font-handwriting text-2xl sm:text-[26px] tracking-wide">
+        tap the envelope to open
+      </span>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       UNLOCKED CONTENT (STAGES 2 & 3)
+  ========================================================== -->
+  <main id="unlockedContent" class="hidden opacity-0 transition-opacity duration-700">
+
+    <!-- =======================================================
+         STAGE 2: MATCHA-BERRY DRIP & HANDWRITING LETTER (#6a8329)
+    ======================================================== -->
+    <section id="stage2" class="relative w-full bg-[#6a8329] text-[#fff8ef] pb-24 sm:pb-32">
+
+      <!-- Full-Width Wavy Dripping Strawberry Glaze SVG (#f6a2bc + #ffd3e1) -->
+      <div class="w-full overflow-hidden leading-none bg-[#6a8329]">
+        <svg class="w-full h-[80px] sm:h-[118px] md:h-[140px] block" viewBox="0 0 1440 165" preserveAspectRatio="none">
+          <!-- Soft shadow under-glaze -->
+          <path
+            d="M0,0 L1440,0 L1440,42 C1415,42 1412,92 1396,92 C1380,92 1378,38 1350,38 C1320,38 1318,125 1298,125 C1278,125 1276,46 1240,46 C1202,46 1198,84 1180,84 C1162,84 1160,34 1120,34 C1078,34 1076,138 1054,138 C1032,138 1030,44 985,44 C940,44 938,96 918,96 C898,96 896,36 850,36 C805,36 802,118 782,118 C762,118 760,42 715,42 C670,42 666,144 644,144 C622,144 620,40 572,40 C526,40 524,88 504,88 C484,88 482,35 435,35 C388,35 386,126 365,126 C344,126 342,45 295,45 C248,45 245,94 226,94 C207,94 205,38 158,38 C112,38 110,132 88,132 C66,132 64,44 28,44 C12,44 6,62 0,62 Z"
+            fill="#e382a0"
+          />
+          <!-- Main strawberry glaze drip -->
+          <path
+            d="M0,0 L1440,0 L1440,32 C1418,32 1414,82 1398,82 C1382,82 1380,28 1350,28 C1322,28 1320,114 1300,114 C1280,114 1278,36 1240,36 C1204,36 1200,74 1182,74 C1164,74 1162,25 1120,25 C1080,25 1078,126 1056,126 C1034,126 1032,34 985,34 C942,34 940,86 920,86 C900,86 898,27 850,27 C807,27 804,108 784,108 C764,108 762,32 715,32 C672,32 668,132 646,132 C624,132 622,30 572,30 C528,30 526,78 506,78 C486,78 484,26 435,26 C390,26 388,116 367,116 C346,116 344,35 295,35 C250,35 247,84 228,84 C209,84 207,28 158,28 C114,28 112,120 90,120 C68,120 66,34 28,34 C12,34 6,52 0,52 Z"
+            fill="#f6a2bc"
+          />
+          <!-- Glossy inner highlight curves (#ffd3e1) -->
+          <path
+            d="M0,0 L1440,0 L1440,14 C1350,18 1280,10 1180,15 C1070,20 960,11 850,15 C740,19 630,10 510,16 C390,21 260,11 130,16 C65,18 25,15 0,14 Z"
+            fill="#ffd3e1"
+            opacity="0.78"
+          />
+          <path d="M1296,65 Q1300,98 1296,105" stroke="#ffd3e1" stroke-width="4.5" stroke-linecap="round" fill="none" opacity="0.85" />
+          <path d="M1052,70 Q1056,110 1052,118" stroke="#ffd3e1" stroke-width="4.5" stroke-linecap="round" fill="none" opacity="0.85" />
+          <path d="M642,74 Q646,116 642,124" stroke="#ffd3e1" stroke-width="4.5" stroke-linecap="round" fill="none" opacity="0.85" />
+          <path d="M363,66 Q367,100 363,108" stroke="#ffd3e1" stroke-width="4.5" stroke-linecap="round" fill="none" opacity="0.85" />
+          <path d="M86,68 Q90,104 86,112" stroke="#ffd3e1" stroke-width="4.5" stroke-linecap="round" fill="none" opacity="0.85" />
+        </svg>
+      </div>
+
+      <!-- Centerpiece Die-Cut Sticker Header (Non-Birthday Appreciation) -->
+      <div class="max-w-3xl mx-auto px-6 pt-4 sm:pt-8 pb-8 text-center">
+        <div class="inline-block sticker-float mb-5">
+          <svg class="w-48 h-36 sm:w-56 sm:h-40 drop-shadow-[0_10px_18px_rgba(32,45,10,0.3)]" viewBox="0 0 240 175">
+            <!-- Left Heart Charm -->
+            <path d="M46 96 Q42 120 48 138" fill="none" stroke="#fff8ef" stroke-width="2" stroke-linecap="round" />
+            <g transform="translate(20, 42) rotate(-12)">
+              <path d="M24 42 C10 30 4 21 4 13 C4 7 9 2 15 2 C19 2 22 4 24 7 C26 4 29 2 33 2 C39 2 44 7 44 13 C44 21 38 30 24 42 Z" fill="#f6a2bc" stroke="#fff8ef" stroke-width="3.5" />
+            </g>
+
+            <!-- Right Star-Heart Charm -->
+            <path d="M194 92 Q198 116 191 136" fill="none" stroke="#fff8ef" stroke-width="2" stroke-linecap="round" />
+            <g transform="translate(172, 36) rotate(14)">
+              <path d="M24 42 C10 30 4 21 4 13 C4 7 9 2 15 2 C19 2 22 4 24 7 C26 4 29 2 33 2 C39 2 44 7 44 13 C44 21 38 30 24 42 Z" fill="#ffd166" stroke="#fff8ef" stroke-width="3.5" />
+            </g>
+
+            <!-- Die-Cut White-Bordered Retro Polaroid Patch (Matcha Cup + Strawberries) -->
+            <g transform="translate(68, 16) rotate(-2)">
+              <rect x="0" y="0" width="104" height="122" rx="15" fill="#fff8ef" />
+              <rect x="8" y="8" width="88" height="82" rx="10" fill="#ffd3e1" />
+
+              <!-- Cute Iced Matcha Latte Cup -->
+              <rect x="28" y="34" width="42" height="40" rx="8" fill="#fff8ef" />
+              <path d="M31 45 H67 V65 C67 69 63 71 59 71 H39 C35 71 31 69 31 65 Z" fill="#6a8329" />
+              <!-- Cream foam top -->
+              <path d="M31 45 Q40 42 49 45 Q58 48 67 45" fill="none" stroke="#fff8ef" stroke-width="3" stroke-linecap="round" />
+              <!-- Kawaii Eyes & Smile -->
+              <circle cx="43" cy="56" r="2.2" fill="#3b4b16" />
+              <circle cx="55" cy="56" r="2.2" fill="#3b4b16" />
+              <path d="M47 59 Q49 62 51 59" fill="none" stroke="#3b4b16" stroke-width="1.8" stroke-linecap="round" />
+              <!-- Pink Straw -->
+              <rect x="55" y="19" width="5" height="17" rx="2.5" transform="rotate(14 55 19)" fill="#d86788" />
+
+              <!-- Cute Little Strawberry beside Cup -->
+              <g transform="translate(66, 56) rotate(12)">
+                <path d="M10 4 C16 4 20 8 18 15 C16 21 10 24 10 24 C10 24 4 21 2 15 C0 8 4 4 10 4 Z" fill="#e56b8f" stroke="#fff8ef" stroke-width="1.5" />
+                <path d="M5 5 L10 8 L15 5 L12 2 L8 2 Z" fill="#6a8329" />
+                <circle cx="8" cy="12" r="0.8" fill="#ffd3e1" />
+                <circle cx="12" cy="13" r="0.8" fill="#ffd3e1" />
+                <circle cx="10" cy="17" r="0.8" fill="#ffd3e1" />
+              </g>
+
+              <text x="52" y="109" text-anchor="middle" font-family="Quicksand, sans-serif" font-size="11" font-weight="700" letter-spacing="0.8" fill="#2563eb">Some Notes</text>
+            </g>
+
+            <!-- Sparkles -->
+            <path d="M120 3 L122 9 L128 11 L122 13 L120 19 L118 13 L112 11 L118 9 Z" fill="#fff8ef" />
+            <path d="M28 24 L29.5 28 L33.5 29.5 L29.5 31 L28 35 L26.5 31 L22.5 29.5 L26.5 28 Z" fill="#fff8ef" />
+            <path d="M212 22 L213.5 26 L217.5 27.5 L213.5 29 L212 33 L210.5 29 L206.5 27.5 L210.5 26 Z" fill="#fff8ef" />
+          </svg>
+        </div>
+
+        <h2 class="font-handwriting text-4xl sm:text-6xl md:text-[64px] font-bold tracking-wide text-[#fff8ef] drop-shadow-sm leading-tight">
+          FOR MY FAVORITE PERSON, ARSEN
+        </h2>
+        <p class="mt-2 text-sm sm:text-base text-[#fff8ef]/90 font-semibold tracking-wide">
+          scroll pelan-pelan ke bawah ya, suratnya lagi ditulisin buat kamu ✍️
+        </p>
+      </div>
+
+      <!-- =====================================================
+           REAL-TIME SCROLL-TRIGGERED HANDWRITING LETTER
+      ====================================================== -->
+      <div id="letterWrapper" class="relative max-w-[650px] mx-auto px-6 sm:px-9 pt-2 pb-6">
+
+        <!-- Animated Moving Gel/Fountain Pen Nib SVG -->
+        <div id="writing-pen" aria-hidden="true">
+          <svg viewBox="0 0 36 36" class="w-full h-full overflow-visible">
+            <!-- Soft glow behind pen tip -->
+            <circle cx="4" cy="32" r="5" fill="#ffd3e1" opacity="0.55" />
+            <!-- Pastel Pink Pen Barrel -->
+            <path d="M8 24 L27 5 C29 3 32 3 33 4 C34 5 34 8 32 10 L13 29 Z" fill="#f6a2bc" stroke="#fff8ef" stroke-width="1.6" stroke-linejoin="round" />
+            <!-- Gold Clip / Ring -->
+            <line x1="11" y1="21" x2="16" y2="26" stroke="#ffd166" stroke-width="2.4" stroke-linecap="round" />
+            <!-- Cream Nib Cone -->
+            <path d="M8 24 L13 29 L3 33 Z" fill="#fff8ef" stroke="#3b4b16" stroke-width="1.2" stroke-linejoin="round" />
+            <!-- Fine Ink Tip -->
+            <circle cx="3.2" cy="32.8" r="1.4" fill="#3b4b16" />
+          </svg>
+        </div>
+
+        <!-- Handwritten Paragraphs Container (Split into individual character spans by JS) -->
+        <article
+          id="handwritingLetter"
+          class="space-y-7 sm:space-y-9 font-handwriting text-[26px] sm:text-[31px] leading-[1.58] text-[#fff8ef] select-none"
+        >
+          <p class="hw-paragraph font-bold text-[32px] sm:text-[38px] text-[#ffd3e1]" data-text="Dear Arsen or Arsenna Arkananta Wijaya,"></p>
+
+          <p class="hw-paragraph" data-text="ngga ada momen spesial atau perayaan apa-apa hari ini—aku cuma tiba-tiba kepikiran buat bikin sesuatu yang kecil, hangat, dan khusus buat kamu. Kadang di tengah hari-hari yang sibuk, aku lupa bilang langsung betapa bersyukurnya aku punya kamu di hidup akuu."></p>
+
+          <p class="hw-paragraph" data-text="kamu punya cara yang sederhana tapi selalu berhasil bikin hari-hari biasa terasa jauh lebih enteng. Dari obrolan random tengah malem kita, ketawa-ketawa sama hal receh, sampai momen hening yang tetap terasa nyaman cuma karna ada kamu di situ."></p>
+
+          <p class="hw-paragraph" data-text="Makasih yaaa, Sayangg, udah selalu jadi tempat pulang yang tenang dan sabar ngadepin segala cerita. Every little thing you do—perhatian kecil kamu, cara kamu dengerin, dan kehadiran kamu beneran berarti banget buat aku lebih dari yang sering aku ucapin."></p>
+
+          <p class="hw-paragraph" data-text="Aku harap di setiap langkah yang lagi kamu jalanin sekarang, kamu selalu dikelilingi hal-hal baik, hati yang lapang, dan alasan baru buat tersenyum setiap hari. Kalau lagi capek atau ngerasa berat, inget ya kamu nggak pernah sendirian."></p>
+
+          <p id="finalSignature" class="hw-paragraph pt-2 font-bold text-[30px] sm:text-[35px] text-[#ffd3e1]" data-text="with love, always. ♡"></p>
+        </article>
+
+        <!-- Discreet Replay Handwriting Button ("tulis ulang ↻") -->
+        <div class="mt-8 flex items-center justify-end">
+          <button
+            id="replayWritingBtn"
+            type="button"
+            class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#4f641c]/75 hover:bg-[#3b4b16] text-[#fff8ef]/90 hover:text-[#fff8ef] text-xs sm:text-sm font-semibold border border-[#fff8ef]/25 shadow-sm transition-all active:scale-95 cursor-pointer"
+          >
+            <span>tulis ulang</span>
+            <span class="text-base leading-none">↻</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Prompt guiding down to Stage 3 -->
+      <div id="bottleGuide" class="max-w-md mx-auto mt-10 px-6 text-center opacity-45 transition-all duration-700">
+        <a href="#stage3" class="inline-flex flex-col items-center gap-2 text-[#fff8ef] hover:scale-105 transition-transform">
+          <span class="font-handwriting text-2xl sm:text-[26px] tracking-wide bg-[#4f641c]/80 px-6 py-2 rounded-full border border-[#fff8ef]/25">
+            masih ada botol pesan di bawah ↓
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <!-- =======================================================
+         STAGE 3: LITTLE NOTES GLASS BOTTLE (#d86788)
+    ======================================================== -->
+    <section
+      id="stage3"
+      class="min-h-screen w-full bg-[#d86788] text-[#fff8ef] py-16 sm:py-24 px-5 flex flex-col items-center justify-center relative overflow-hidden"
+    >
+      <!-- Header -->
+      <div class="text-center max-w-lg mx-auto mb-8 sm:mb-10">
+        <h2 class="font-serif-editorial text-3xl sm:text-5xl font-normal tracking-tight text-[#fff8ef]">
+          Little notes, just for you
+        </h2>
+        <p class="font-handwriting text-2xl sm:text-[28px] text-[#fff8ef]/95 mt-1.5">
+          give it a little shake, or tap them one by one.
+        </p>
+        <!-- Progress counter pill -->
+        <div class="mt-3 inline-flex items-center gap-2 px-4 py-1 rounded-full bg-[#b94b6b]/65 border border-[#fff8ef]/25 text-xs sm:text-sm font-semibold">
+          <span>✨</span>
+          <span id="openedCounter">0 / 9 notes opened</span>
+        </div>
+      </div>
+
+      <!-- Glass Bottle Container -->
+      <div class="relative flex flex-col items-center justify-center my-2">
+        <div
+          id="glassBottle"
+          class="relative w-[228px] h-[372px] sm:w-[248px] sm:h-[400px] select-none cursor-pointer"
+          title="Tap or shake the bottle"
+        >
+          <!-- Custom Glass Bottle SVG -->
+          <svg class="w-full h-full drop-shadow-[0_20px_30px_rgba(92,23,44,0.28)] pointer-events-none" viewBox="0 0 240 400">
+            <!-- Olive Green Cork Stopper (#6a8329) -->
+            <rect x="86" y="14" width="68" height="24" rx="6" fill="#6a8329" stroke="#475919" stroke-width="2" />
+            <line x1="97" y1="18" x2="97" y2="34" stroke="#85a336" stroke-width="1.5" opacity="0.65" />
+            <line x1="113" y1="18" x2="113" y2="34" stroke="#475919" stroke-width="1.5" opacity="0.5" />
+            <line x1="128" y1="18" x2="128" y2="34" stroke="#85a336" stroke-width="1.5" opacity="0.65" />
+            <line x1="142" y1="18" x2="142" y2="34" stroke="#475919" stroke-width="1.5" opacity="0.5" />
+
+            <!-- Bottle Neck Lip -->
+            <rect x="82" y="36" width="76" height="8" rx="4" fill="rgba(255, 248, 239, 0.45)" stroke="rgba(255, 248, 239, 0.85)" stroke-width="2" />
+
+            <!-- Translucent White Glass Body -->
+            <path
+              d="M90 44 L90 74 C90 92 38 104 38 148 L38 354 C38 374 52 386 72 386 L168 386 C188 386 202 374 202 354 L202 148 C202 104 150 92 150 74 L150 44 Z"
+              fill="rgba(255, 235, 241, 0.24)"
+              stroke="rgba(255, 248, 239, 0.85)"
+              stroke-width="3"
+            />
+
+            <!-- Inner Glass Bottom Rim -->
+            <path
+              d="M48 356 C48 369 58 376 74 376 L166 376 C182 376 192 369 192 356"
+              fill="none"
+              stroke="rgba(255, 248, 239, 0.45)"
+              stroke-width="3"
+              stroke-linecap="round"
+            />
+
+            <!-- Vertical White Glossy Reflection Highlight on Left -->
+            <rect x="54" y="142" width="11" height="175" rx="5.5" fill="rgba(255, 248, 239, 0.52)" />
+            <circle cx="59.5" cy="126" r="4.5" fill="rgba(255, 248, 239, 0.52)" />
+          </svg>
+
+          <!-- Interactive Layer for the 9 Note Tokens inside the Bottle -->
+          <div
+            id="charmsChamber"
+            class="absolute left-[40px] right-[40px] top-[155px] bottom-[22px]"
+          >
+            <!-- Note tokens injected by JS -->
+          </div>
+        </div>
+
+        <!-- Olive Green "Shake it!" Pill Button (#6a8329) -->
+        <button
+          id="shakeBtn"
+          type="button"
+          class="mt-6 px-9 py-3 rounded-full bg-[#6a8329] hover:bg-[#5a7022] active:scale-95 text-[#fff8ef] font-bold text-base sm:text-lg tracking-wide shadow-[0_8px_20px_rgba(77,102,32,0.4)] border border-[#8ca93d]/50 transition-all cursor-pointer"
+        >
+          Shake it!
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================
+       CREAM PAPER NOTE CARD MODAL (WITH PREV / NEXT / CLOSE)
+  ========================================================== -->
+  <div
+    id="noteModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center p-5 bg-[#2d131c]/60 backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div
+      id="noteModalCard"
+      class="relative w-full max-w-sm rounded-3xl bg-[#fff8ef] text-[#3b4b16] p-6 sm:p-8 shadow-[0_24px_50px_rgba(32,12,20,0.45)] border-2 border-[#e8decb]"
+    >
+      <!-- Top Decorative Header -->
+      <div class="flex items-center justify-between mb-4 pb-3 border-b border-[#e8decb]">
+        <div class="flex items-center gap-2.5">
+          <span
+            id="modalIconBadge"
+            class="w-9 h-9 rounded-xl bg-[#f6a2bc]/35 text-[#d86788] flex items-center justify-center"
+          ></span>
+          <div>
+            <p id="modalLabel" class="text-xs font-bold uppercase tracking-wider text-[#6a8329]">
+              Catatan #1
+            </p>
+            <p id="modalCategory" class="text-xs font-semibold text-[#8f8370]">
+              Little Reminder
+            </p>
+          </div>
+        </div>
+        <button
+          id="closeModalBtn"
+          type="button"
+          aria-label="Close note"
+          class="w-8 h-8 rounded-full bg-[#f3eadc] hover:bg-[#f6a2bc]/35 text-[#6a8329] flex items-center justify-center font-bold transition-colors cursor-pointer"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Handwritten Note Body ('Caveat') -->
+      <p
+        id="modalMessage"
+        class="font-handwriting text-[27px] sm:text-[31px] leading-[1.45] text-[#3b4b16] my-4 min-h-[125px]"
+      ></p>
+
+      <!-- Bottom Prev / Next / Close Navigation -->
+      <div class="mt-6 pt-3 border-t border-[#e8decb] flex items-center justify-between gap-2">
+        <button
+          id="prevNoteBtn"
+          type="button"
+          class="px-3.5 py-1.5 rounded-full bg-[#f3eadc] hover:bg-[#e6dac6] text-[#3b4b16] text-xs sm:text-sm font-bold transition-colors cursor-pointer"
+        >
+          ← Prev
+        </button>
+
+        <span id="modalPageIndicator" class="text-xs font-bold text-[#8f8370]">
+          1 / 9
+        </span>
+
+        <button
+          id="nextNoteBtn"
+          type="button"
+          class="px-3.5 py-1.5 rounded-full bg-[#6a8329] hover:bg-[#596f21] text-[#fff8ef] text-xs sm:text-sm font-bold transition-colors cursor-pointer"
+        >
+          Next →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       PERSISTENT BOTTOM-LEFT MUSIC PLAYER PILL
+       "You! - LANY"
+  ========================================================== -->
+  <audio id="songAudio" src="you!.mp3" preload="auto" loop></audio>
+  <input id="audioFileInput" type="file" accept="audio/*" class="hidden" />
+
+  <div
+    id="musicPill"
+    class="fixed bottom-[18px] left-[18px] z-50 flex items-center gap-2.5 pl-2.5 pr-2 py-2 rounded-full bg-[#3b4b16] text-[#fff8ef] shadow-[0_10px_25px_rgba(24,33,9,0.45)] border border-[#6a8329]/75"
+  >
+    <!-- Circular Pink Vinyl Disc (#f29cb6) -->
+    <div id="vinylDisc" class="w-9 h-9 rounded-full bg-[#19220a] border-2 border-[#6a8329] flex items-center justify-center relative shrink-0">
+      <div class="w-4 h-4 rounded-full bg-[#f29cb6] flex items-center justify-center">
+        <div class="w-1.5 h-1.5 rounded-full bg-[#3b4b16]"></div>
+      </div>
+    </div>
+
+    <!-- Title & Artist Subtitle -->
+    <div class="leading-tight pr-0.5 max-w-[138px] sm:max-w-[168px]">
+      <div class="text-xs sm:text-[13px] font-bold text-[#fff8ef] tracking-tight truncate">
+        You!
+      </div>
+      <div id="artistSubtitle" class="text-[10px] sm:text-[11px] text-[#fff8ef]/80 font-medium truncate">
+        LANY
+      </div>
+    </div>
+
+    <!-- 4-Bar Animated Equalizer -->
+    <div id="eqBars" class="flex items-end gap-[2.5px] h-4 px-0.5">
+      <span class="eq-bar"></span>
+      <span class="eq-bar"></span>
+      <span class="eq-bar"></span>
+      <span class="eq-bar"></span>
+    </div>
+
+    <!-- Discreet '+' Local MP3 Loader Button -->
+    <button
+      id="attachAudioBtn"
+      type="button"
+      title="Pilih file MP3 Hannah Montana dari perangkat"
+      aria-label="Load local audio file"
+      class="w-7 h-7 rounded-full bg-[#2b3710] hover:bg-[#50641e] text-[#f29cb6] flex items-center justify-center text-xs font-bold border border-[#6a8329]/60 transition-colors cursor-pointer shrink-0"
+    >
+      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+    </button>
+
+    <!-- Circular Pink Play / Pause Button -->
+    <button
+      id="pillPlayBtn"
+      type="button"
+      aria-label="Play or Pause Music"
+      class="w-9 h-9 rounded-full bg-[#f29cb6] hover:bg-[#f6b1c6] active:scale-95 text-[#3b4b16] flex items-center justify-center shadow-sm transition-all cursor-pointer shrink-0"
+    >
+      <svg id="pillPlayIcon" class="w-4 h-4 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+        <polygon points="6,4 20,12 6,20" />
+      </svg>
+      <svg id="pillPauseIcon" class="w-4 h-4 hidden" viewBox="0 0 24 24" fill="currentColor">
+        <rect x="6" y="4" width="4" height="16" rx="1" />
+        <rect x="14" y="4" width="4" height="16" rx="1" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- =========================================================
+       INTERACTIVE SCRIPT: ENVELOPE, REAL-TIME PEN HANDWRITING,
+       SHAKING BOTTLE & HYBRID AUDIO ENGINE
+  ========================================================== -->
+  <script>
+    (function () {
+      /* -------------------------------------------------------
+         1. HYBRID AUDIO ENGINE ('Hannah Montana - rex orange county'
+            + Web Audio Lo-Fi Rhodes Electric Piano Fallback)
+      -------------------------------------------------------- */
+      const songAudio = document.getElementById('songAudio');
+      const audioFileInput = document.getElementById('audioFileInput');
+      const attachAudioBtn = document.getElementById('attachAudioBtn');
+
+      let audioCtx = null;
+      let isPlaying = false;
+      let useHtmlAudio = false;
+      let chordTimer = null;
+      let chordStep = 0;
+
+      songAudio.addEventListener('canplaythrough', () => {
+        useHtmlAudio = true;
+      });
+      songAudio.addEventListener('error', () => {
+        useHtmlAudio = false;
+      });
+
+      attachAudioBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        audioFileInput.click();
+      });
+
+      audioFileInput.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        if (chordTimer) {
+          clearInterval(chordTimer);
+          chordTimer = null;
+        }
+
+        const objectUrl = URL.createObjectURL(file);
+        songAudio.src = objectUrl;
+        useHtmlAudio = true;
+
+        songAudio.play().then(() => {
+          isPlaying = true;
+          updateAudioUI();
+        }).catch(() => {});
+      });
+
+      // Warm Rex Orange County-inspired lo-fi Rhodes chord progression
+      const chordProgression = [
+        [174.61, 220.00, 261.63, 329.63, 523.25], // Fmaj7
+        [164.81, 196.00, 246.94, 293.66, 493.88], // Em7
+        [146.83, 174.61, 220.00, 261.63, 440.00], // Dm7
+        [130.81, 196.00, 246.94, 329.63, 392.00]  // Cmaj7
+      ];
+
+      function playWarmChord(freqs) {
+        if (!audioCtx || !isPlaying || useHtmlAudio) return;
+        const now = audioCtx.currentTime;
+
+        freqs.forEach((freq, idx) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          const filter = audioCtx.createBiquadFilter();
+
+          osc.type = idx === freqs.length - 1 ? 'sine' : 'triangle';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.085);
+
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(980, now);
+
+          const peakGain = idx === freqs.length - 1 ? 0.036 : 0.028;
+          gain.gain.setValueAtTime(0.0001, now + idx * 0.085);
+          gain.gain.exponentialRampToValueAtTime(peakGain, now + idx * 0.085 + 0.16);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.085 + 2.75);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          osc.start(now + idx * 0.085);
+          osc.stop(now + idx * 0.085 + 2.85);
+        });
+      }
+
+      function updateAudioUI() {
+        const iconMuted = document.getElementById('iconMuted');
+        const iconUnmuted = document.getElementById('iconUnmuted');
+        const pillPlayIcon = document.getElementById('pillPlayIcon');
+        const pillPauseIcon = document.getElementById('pillPauseIcon');
+        const vinylDisc = document.getElementById('vinylDisc');
+        const eqBars = document.getElementById('eqBars');
+
+        if (isPlaying) {
+          iconMuted.classList.add('hidden');
+          iconUnmuted.classList.remove('hidden');
+          pillPlayIcon.classList.add('hidden');
+          pillPauseIcon.classList.remove('hidden');
+          vinylDisc.classList.add('disc-spinning');
+          eqBars.classList.add('is-playing');
+        } else {
+          iconMuted.classList.remove('hidden');
+          iconUnmuted.classList.add('hidden');
+          pillPlayIcon.classList.remove('hidden');
+          pillPauseIcon.classList.add('hidden');
+          vinylDisc.classList.remove('disc-spinning');
+          eqBars.classList.remove('is-playing');
+        }
+      }
+
+      function startSynthFallback() {
+        try {
+          if (!audioCtx) {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            audioCtx = new AudioContextClass();
+          }
+          if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+          }
+          if (chordTimer) clearInterval(chordTimer);
+
+          isPlaying = true;
+          updateAudioUI();
+
+          playWarmChord(chordProgression[chordStep % chordProgression.length]);
+          chordStep++;
+
+          chordTimer = setInterval(() => {
+            if (!isPlaying || useHtmlAudio) return;
+            playWarmChord(chordProgression[chordStep % chordProgression.length]);
+            chordStep++;
+          }, 2550);
+        } catch (err) {
+          console.warn('Audio init skipped:', err);
+        }
+      }
+
+      function startMusic() {
+        if (isPlaying) return;
+        const playPromise = songAudio.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              useHtmlAudio = true;
+              isPlaying = true;
+              updateAudioUI();
+            })
+            .catch(() => {
+              useHtmlAudio = false;
+              startSynthFallback();
+            });
+        } else {
+          startSynthFallback();
+        }
+      }
+
+      function stopMusic() {
+        isPlaying = false;
+        if (!songAudio.paused) songAudio.pause();
+        if (chordTimer) {
+          clearInterval(chordTimer);
+          chordTimer = null;
+        }
+        updateAudioUI();
+      }
+
+      function toggleMusic() {
+        if (isPlaying) stopMusic();
+        else startMusic();
+      }
+
+      document.getElementById('topMuteBtn').addEventListener('click', toggleMusic);
+      document.getElementById('pillPlayBtn').addEventListener('click', toggleMusic);
+
+      /* -------------------------------------------------------
+         2. STAGE 2: REAL-TIME SCROLL-SYNCED HANDWRITING ENGINE
+            WITH MOVING FOUNTAIN/GEL PEN NIB (#writing-pen)
+      -------------------------------------------------------- */
+      const letterWrapper = document.getElementById('letterWrapper');
+      const writingPen = document.getElementById('writing-pen');
+      const bottleGuide = document.getElementById('bottleGuide');
+      const replayWritingBtn = document.getElementById('replayWritingBtn');
+      const paragraphs = document.querySelectorAll('.hw-paragraph');
+
+      let allCharSpans = [];
+      let writtenCount = 0;
+      let targetWrittenCount = 0;
+      let writingRafId = null;
+      let penWigglePhase = 0;
+
+      // Split each paragraph into word wrappers + individual character spans
+      function buildHandwritingSpans() {
+        allCharSpans = [];
+        paragraphs.forEach((pEl) => {
+          const rawText = pEl.getAttribute('data-text') || '';
+          pEl.innerHTML = '';
+
+          const tokens = rawText.split(/(\s+)/);
+          tokens.forEach((token) => {
+            if (/^\s+$/.test(token)) {
+              pEl.appendChild(document.createTextNode(token));
+            } else if (token.length > 0) {
+              const wordSpan = document.createElement('span');
+              wordSpan.className = 'hw-word';
+
+              for (const ch of token) {
+                const charSpan = document.createElement('span');
+                charSpan.className = 'hw-char';
+                charSpan.textContent = ch;
+                wordSpan.appendChild(charSpan);
+                allCharSpans.push(charSpan);
+              }
+              pEl.appendChild(wordSpan);
+            }
+          });
+        });
+      }
+
+      buildHandwritingSpans();
+
+      // Calculate how many characters should be written based on current scroll progress
+      function computeScrollTargetCount() {
+        if (unlockedContent.classList.contains('hidden')) return 0;
+        const rect = letterWrapper.getBoundingClientRect();
+        const vh = window.innerHeight || document.documentElement.clientHeight;
+
+        // Start writing once top of letter reaches 82% of viewport height
+        const startTrigger = vh * 0.82;
+        // Finish writing around when bottom of letter reaches 68% of viewport height
+        const totalTravel = Math.max(180, rect.height - vh * 0.14);
+        const scrolledIntoLetter = startTrigger - rect.top;
+
+        if (scrolledIntoLetter <= 0) return 0;
+        const ratio = Math.min(1, Math.max(0, scrolledIntoLetter / totalTravel));
+        return Math.round(ratio * allCharSpans.length);
+      }
+
+      // Position the moving pen tip directly at the character being written
+      function movePenToChar(charEl) {
+        if (!charEl) return;
+        const wrapperRect = letterWrapper.getBoundingClientRect();
+        const charRect = charEl.getBoundingClientRect();
+
+        // Nib tip sits at bottom-left (4px, 32px) of the 36x36 SVG
+        const tipX = charRect.right - wrapperRect.left - 3;
+        const tipY = charRect.bottom - wrapperRect.top - 36;
+
+        penWigglePhase += 0.65;
+        const tiltDeg = Math.sin(penWigglePhase) * 6 - 4;
+
+        writingPen.classList.add('active');
+        writingPen.style.transform = `translate3d(${tipX}px, ${tipY}px, 0) rotate(${tiltDeg}deg)`;
+      }
+
+      // Animation loop that writes characters smoothly & accelerates if user scrolls faster
+      function tickHandwriting() {
+        const scrollDesired = computeScrollTargetCount();
+        // Never un-write characters on upward scroll unless user clicks "tulis ulang ↻"
+        if (scrollDesired > targetWrittenCount) {
+          targetWrittenCount = scrollDesired;
+        }
+
+        const backlog = targetWrittenCount - writtenCount;
+        if (backlog > 0) {
+          // Dynamically accelerate when user scrolls quickly so pen stays synced in viewport
+          const charsThisFrame = Math.max(1, Math.ceil(backlog * 0.14));
+          const nextIndex = Math.min(allCharSpans.length, writtenCount + charsThisFrame);
+
+          for (let i = writtenCount; i < nextIndex; i++) {
+            allCharSpans[i].classList.add('written');
+          }
+          writtenCount = nextIndex;
+
+          const activeChar = allCharSpans[writtenCount - 1];
+          movePenToChar(activeChar);
+
+          // If all characters are finished, gracefully tuck away the pen & brighten bottle guide
+          if (writtenCount >= allCharSpans.length) {
+            setTimeout(() => {
+              if (writtenCount >= allCharSpans.length) {
+                writingPen.classList.remove('active');
+              }
+            }, 450);
+            bottleGuide.classList.remove('opacity-45');
+            bottleGuide.classList.add('opacity-100');
+          }
+        }
+
+        writingRafId = requestAnimationFrame(tickHandwriting);
+      }
+
+      // IntersectionObserver kicks off initial opening lines as soon as Stage 2 enters view
+      const letterObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && targetWrittenCount === 0) {
+              // Automatically start writing "Dear Arsen," and the first line right away
+              targetWrittenCount = Math.min(allCharSpans.length, 42);
+            }
+          });
+        },
+        { threshold: 0.08 }
+      );
+      letterObserver.observe(letterWrapper);
+
+      // Replay button ("tulis ulang ↻") resets and writes smoothly from "Dear Acen,"
+      replayWritingBtn.addEventListener('click', () => {
+        allCharSpans.forEach((span) => span.classList.remove('written'));
+        writtenCount = 0;
+        targetWrittenCount = 0;
+        writingPen.classList.remove('active');
+        bottleGuide.classList.remove('opacity-100');
+        bottleGuide.classList.add('opacity-45');
+
+        letterWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        setTimeout(() => {
+          const desired = computeScrollTargetCount();
+          targetWrittenCount = Math.max(desired, Math.min(allCharSpans.length, 55));
+        }, 480);
+      });
+
+      /* -------------------------------------------------------
+         3. STAGE 1 -> STAGE 2 ENVELOPE INTERACTION
+      -------------------------------------------------------- */
+      const envelopeTrigger = document.getElementById('envelopeTrigger');
+      const envelopePrompt = document.getElementById('envelopePrompt');
+      const unlockedContent = document.getElementById('unlockedContent');
+      const stage2 = document.getElementById('stage2');
+      let isEnvelopeOpened = false;
+
+      function spawnBurstHearts(originEl) {
+        const rect = originEl.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const colors = ['#f8fbff', '#dbeafe', '#93c5fd', '#60a5fa'];
+
+        for (let i = 0; i < 12; i++) {
+          const heart = document.createElement('div');
+          heart.className = 'floating-heart';
+          const offsetX = (Math.random() - 0.5) * 180;
+          const offsetY = (Math.random() - 0.5) * 60;
+          const color = colors[i % colors.length];
+          const size = 14 + Math.floor(Math.random() * 12);
+
+          heart.style.left = `${centerX + offsetX}px`;
+          heart.style.top = `${centerY + offsetY}px`;
+          heart.style.animationDelay = `${i * 0.04}s`;
+          heart.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+          document.body.appendChild(heart);
+
+          setTimeout(() => heart.remove(), 1500);
+        }
+      }
+
+      function handleOpenEnvelope() {
+        startMusic();
+
+        if (!isEnvelopeOpened) {
+          isEnvelopeOpened = true;
+          envelopeTrigger.classList.add('opened');
+          envelopePrompt.style.opacity = '0';
+          spawnBurstHearts(envelopeTrigger);
+
+          unlockedContent.classList.remove('hidden');
+          requestAnimationFrame(() => {
+            unlockedContent.classList.remove('opacity-0');
+            unlockedContent.classList.add('opacity-100');
+          });
+
+          if (!writingRafId) {
+            writingRafId = requestAnimationFrame(tickHandwriting);
+          }
+
+          setTimeout(() => {
+            stage2.scrollIntoView({ behavior: 'smooth' });
+          }, 820);
+        } else {
+          stage2.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+
+      envelopeTrigger.addEventListener('click', handleOpenEnvelope);
+      envelopeTrigger.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleOpenEnvelope();
+        }
+      });
+
+      /* -------------------------------------------------------
+         4. STAGE 3: 9 LITTLE NOTE TOKENS INSIDE THE GLASS BOTTLE
+      -------------------------------------------------------- */
+      const littleNotes = [
+        {
+          id: 1,
+          category: 'Little Reminder',
+          bg: '#fff8ef',
+          fg: '#2563eb',
+          icon: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`,
+          text: 'Dear Love, jangan lupa istirahat hari ini ya. Kamu udah ngelakuin yang terbaik, dan aku bangga banget sama setiap usaha kecil yang kamu jalanin.'
+        },
+        {
+          id: 2,
+          category: 'Reason I Appreciate You',
+          bg: '#2563eb',
+          fg: '#fff8ef',
+          icon: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z"/></svg>`,
+          text: 'Salah satu hal favorit aku tentang kamu adalah cara kamu bikin suasana jadi warm tanpa perlu berusaha keras. Presence kamu aja udah nenangin aku banget.'
+        },
+        {
+          id: 3,
+          category: 'Soundtrack of Us',
+          bg: '#93c5fd',
+          fg: '#1e3a8a',
+          icon: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>`,
+          text: 'Setiap kali denger lagu LANY you! atau stuck, entah kenapa pikiran aku selalu otomatis muter momen-momen bareng kamu tau.'
+        },
+        {
+          id: 4,
+          category: 'After the Rain',
+          bg: '#1e40af',
+          fg: '#fff8ef',
+          icon: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M3 17a9 9 0 0 1 18 0"/><path d="M7 17a5 5 0 0 1 10 0"/><path d="M11 17a1 1 0 0 1 2 0"/></svg>`,
+          text: 'Kalau hari ini rasanya agak mendung atau berat, semoga catatan kecil ini jadi pelangi mini yang ngingetin kamu kalau semuanya bakal baik-baik aja.'
+        },
+        {
+          id: 5,
+          category: 'Secret Note',
+          bg: '#fff8ef',
+          fg: '#2563eb',
+          icon: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>`,
+          text: 'Fun fact: senyum kamu tuh beneran nular. tatapan kamu ke aku itu tuh kaya narkoba, candu wkwk. Sekali kamu ketawa lepas, mood aku langsung naik 100%.'
+        },
+        {
+          id: 6,
+          category: 'Blue Drink Break',
+          bg: '#93c5fd',
+          fg: '#1e3a8a',
+          icon: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>`,
+          text: 'Kapan-kapan kita jajan minuman favorit kamu lagi yuk, ngobrol ngalor-ngidul tanpa buru-buru waktu.'
+        },
+        {
+          id: 7,
+          category: 'Late Night Thought',
+          bg: '#2563eb',
+          fg: '#fff8ef',
+          icon: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+          text: 'Di antara banyaknya hal yang berubah, terima kasih udah tetap jadi Acen yang tulus, perhatian, dan selalu bikin aku ngerasa dihargai.'
+        },
+        {
+          id: 8,
+          category: 'Bloom & Grow',
+          bg: '#fff8ef',
+          fg: '#2563eb',
+          icon: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/></svg>`,
+          text: 'Semoga hal-hal yang lagi kamu semogakan pelan-pelan mekar satu per satu di waktu yang paling pas buat kamu.'
+        },
+        {
+          id: 9,
+          category: 'Just Because',
+          bg: '#1e40af',
+          fg: '#dbeafe',
+          icon: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/></svg>`,
+          text: 'Nggak butuh alasan khusus buat bilang ini : I appreciate you, I’m rooting for you, and I’m really glad you’re you, Acen.'
+        }
+      ];
+
+      const initialPositions = [
+        { left: 16, top: 44, rot: -16 },
+        { left: 68, top: 38, rot: 14 },
+        { left: 106, top: 68, rot: -22 },
+        { left: 24, top: 88, rot: 19 },
+        { left: 66, top: 84, rot: -11 },
+        { left: 104, top: 112, rot: 24 },
+        { left: 14, top: 132, rot: -8 },
+        { left: 56, top: 130, rot: 15 },
+        { left: 96, top: 146, rot: -18 }
+      ];
+
+      const charmsChamber = document.getElementById('charmsChamber');
+      const openedSet = new Set();
+      const charmElements = [];
+      let currentModalIndex = 0;
+
+      function updateOpenedCounter() {
+        const counterEl = document.getElementById('openedCounter');
+        counterEl.textContent = `${openedSet.size} / ${littleNotes.length} notes opened`;
+      }
+
+      littleNotes.forEach((note, index) => {
+        const pos = initialPositions[index];
+        const charm = document.createElement('button');
+        charm.type = 'button';
+        charm.className = 'note-charm';
+        charm.setAttribute('aria-label', `Open Catatan #${note.id}`);
+        charm.style.backgroundColor = note.bg;
+        charm.style.color = note.fg;
+        charm.style.left = `${pos.left}px`;
+        charm.style.top = `${pos.top}px`;
+        charm.style.transform = `rotate(${pos.rot}deg)`;
+        charm.style.zIndex = `${10 + index}`;
+        charm.innerHTML = note.icon;
+
+        charm.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openNoteModalByIndex(index);
+        });
+
+        charmsChamber.appendChild(charm);
+        charmElements.push(charm);
+      });
+
+      const glassBottle = document.getElementById('glassBottle');
+      const shakeBtn = document.getElementById('shakeBtn');
+
+      function shakeBottle() {
+        startMusic();
+        glassBottle.classList.remove('bottle-shaking');
+        void glassBottle.offsetWidth;
+        glassBottle.classList.add('bottle-shaking');
+
+        const chamberW = charmsChamber.clientWidth - 42;
+        const chamberH = charmsChamber.clientHeight - 42;
+
+        charmElements.forEach((el) => {
+          el.classList.remove('highlighted');
+          const jumpX = Math.max(4, Math.min(chamberW, Math.random() * chamberW));
+          const jumpY = Math.max(0, Math.random() * (chamberH * 0.55));
+          const spinRot = (Math.random() - 0.5) * 140;
+          el.style.left = `${jumpX}px`;
+          el.style.top = `${jumpY}px`;
+          el.style.transform = `rotate(${spinRot}deg) scale(1.06)`;
+        });
+
+        setTimeout(() => {
+          const highlightIdx = Math.floor(Math.random() * charmElements.length);
+          charmElements.forEach((el, idx) => {
+            const settleX = Math.max(4, Math.min(chamberW, 6 + Math.random() * (chamberW - 8)));
+            const settleY = Math.max(30, chamberH * 0.25 + Math.random() * (chamberH * 0.72));
+            const settleRot = (Math.random() - 0.5) * 56;
+            el.style.left = `${settleX}px`;
+            el.style.top = `${settleY}px`;
+            el.style.transform = `rotate(${settleRot}deg) scale(1)`;
+
+            if (idx === highlightIdx) {
+              el.classList.add('highlighted');
+            }
+          });
+        }, 320);
+      }
+
+      shakeBtn.addEventListener('click', shakeBottle);
+      glassBottle.addEventListener('click', shakeBottle);
+
+      /* -------------------------------------------------------
+         5. CREAM NOTE CARD MODAL (PREV / NEXT / CLOSE)
+      -------------------------------------------------------- */
+      const noteModal = document.getElementById('noteModal');
+      const noteModalCard = document.getElementById('noteModalCard');
+      const modalLabel = document.getElementById('modalLabel');
+      const modalCategory = document.getElementById('modalCategory');
+      const modalIconBadge = document.getElementById('modalIconBadge');
+      const modalMessage = document.getElementById('modalMessage');
+      const modalPageIndicator = document.getElementById('modalPageIndicator');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const prevNoteBtn = document.getElementById('prevNoteBtn');
+      const nextNoteBtn = document.getElementById('nextNoteBtn');
+
+      function openNoteModalByIndex(index) {
+        startMusic();
+        currentModalIndex = (index + littleNotes.length) % littleNotes.length;
+        const note = littleNotes[currentModalIndex];
+        const charmEl = charmElements[currentModalIndex];
+
+        openedSet.add(note.id);
+        updateOpenedCounter();
+
+        if (charmEl && !charmEl.querySelector('.read-dot')) {
+          const dot = document.createElement('span');
+          dot.className = 'read-dot absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[#2563eb] border border-[#fff8ef]';
+          charmEl.appendChild(dot);
+        }
+
+        modalLabel.textContent = `Catatan #${note.id}`;
+        modalCategory.textContent = note.category;
+        modalIconBadge.innerHTML = note.icon;
+        modalMessage.textContent = note.text;
+        modalPageIndicator.textContent = `${note.id} / ${littleNotes.length}`;
+
+        noteModal.classList.remove('hidden');
+        noteModal.classList.add('flex');
+        noteModalCard.classList.remove('modal-card-enter');
+        void noteModalCard.offsetWidth;
+        noteModalCard.classList.add('modal-card-enter');
+      }
+
+      function closeNoteModal() {
+        noteModal.classList.add('hidden');
+        noteModal.classList.remove('flex');
+      }
+
+      prevNoteBtn.addEventListener('click', () => openNoteModalByIndex(currentModalIndex - 1));
+      nextNoteBtn.addEventListener('click', () => openNoteModalByIndex(currentModalIndex + 1));
+      closeModalBtn.addEventListener('click', closeNoteModal);
+
+      noteModal.addEventListener('click', (e) => {
+        if (e.target === noteModal) closeNoteModal();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (noteModal.classList.contains('hidden')) return;
+        if (e.key === 'Escape') closeNoteModal();
+        if (e.key === 'ArrowLeft') openNoteModalByIndex(currentModalIndex - 1);
+        if (e.key === 'ArrowRight') openNoteModalByIndex(currentModalIndex + 1);
+      });
+    })();
+  </script>
+</body>
+</html>
